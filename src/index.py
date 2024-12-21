@@ -19,9 +19,10 @@ def main() :
 
 
 def store(docs:list[Document]) :
-	db = Chroma(persist_directory="vectors", embedding_function=embeddingFunction())
-	db.add_documents(docs)
-	db.persist()
+	#db = Chroma(persist_directory="vectors", embedding_function=embeddingFunction())
+	#db.add_documents(docs)
+	#db.persist()
+	vectorstore = Chroma.from_documents(docs,embeddingFunction(),persist_directory="vectors")
 
 
 def split(docs:list[Document]) :
