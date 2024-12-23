@@ -23,7 +23,7 @@ def main() :
 	docs:list[Document] = rag.query("can i specify return type in python")
 
 	for doc in docs :
-		print(doc)
+		print(doc.to_json().get("kwargs").get("page_content"))
 		print()
 		print()
 		print()
