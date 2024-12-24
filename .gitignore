@@ -4,3 +4,4 @@ lib
 share
 data/*
 database/*
+__pycache__/*
