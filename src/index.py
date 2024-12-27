@@ -1,4 +1,4 @@
-from src.rag import RAG
+from rag import RAG
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 
 DOCUMENTS = "data"

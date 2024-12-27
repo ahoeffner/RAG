@@ -1,4 +1,5 @@
 from rag import RAG
+from langchain.schema.document import Document
 
 
 LOCATION = "database"
@@ -18,12 +19,15 @@ def main() :
 		if(text.lower() == "exit") :
 			break
 
-		docs = rag.query(text)
+		response, sources = rag.query(text)
 
-		for doc in docs :
-			print(doc.to_json().get("kwargs").get("page_content"))
-			print()
-			print()
+		print()
+		print()
+		print(response)
+		print()
+		for source in sources :
+			print(source)
+		print()
 
 
 main()
