@@ -1,4 +1,4 @@
-from rag import RAG
+from Rag import Rag
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 
 DOCUMENTS = "data"
@@ -9,7 +9,7 @@ def main() :
 	loader = PyPDFDirectoryLoader(DOCUMENTS)
 	docs = loader.load()
 
-	RAG.create(LOCATION,RAG.splitText(docs))
+	Rag.create(LOCATION,Rag.splitText(docs))
 	print("Stored in",LOCATION)
 
 main()

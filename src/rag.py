@@ -1,12 +1,13 @@
 import json
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaLLM
+from transformers import GPT2TokenizerFast
 from langchain_aws import BedrockEmbeddings
 from langchain.schema.document import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 
-class RAG :
+class Rag :
 	_vectors:Chroma = None
 	_history:list[str] = []
 
@@ -21,7 +22,7 @@ class RAG :
 
 
 	def __init__(self,location:str) :
-		self._vectors = Chroma(persist_directory=location, embedding_function=RAG.__embeddingFunction())
+		self._vectors = Chroma(persist_directory=location, embedding_function=Rag.__embeddingFunction())
 
 
 	def query(self,text:str) :
@@ -45,10 +46,10 @@ class RAG :
 
 			resp = "\n" + doc.get("page_content")
 
-			source = RAG._to_json(mdata,score)
+			source = Rag._to_json(mdata,score)
 			sources.append(source)
 
-		prmt = RAG.__PROMPT__.format(context=resp,question=text)
+		prmt = Rag.__PROMPT__.format(context=resp,question=text)
 
 		model = OllamaLLM(model="mistral")
 
@@ -69,15 +70,15 @@ class RAG :
 	def create(location:str, docs:list[Document]) :
 		for doc in docs :
 			print(doc.to_json())
-		Chroma.from_documents(docs,RAG.__embeddingFunction(),persist_directory=location)
+		Chroma.from_documents(docs,Rag.__embeddingFunction(),persist_directory=location)
 
 
 	def splitText(docs:list[Document]) :
-		text_splitter = RecursiveCharacterTextSplitter(
-		chunk_size=800,  # Desired chunk size
-		chunk_overlap=80,  # Overlapping characters between chunks
-		length_function=len,
-		is_separator_regex=False)
+		tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
+		text_splitter = RecursiveCharacterTextSplitter.from_huggingface_tokenizer(
+			tokenizer,
+			chunk_size=8000,
+			chunk_overlap=512)
 		return(text_splitter.split_documents(docs))
 
 

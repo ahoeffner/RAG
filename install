@@ -1,0 +1,11 @@
+pip install -U boto3
+pip install -U pypdf
+pip install -U langchain
+pip install -U langchain_chroma
+pip install -U langchain_ollama
+pip install -U langchain_community
+pip install -U langchain_aws
+pip install -U transformers
+pip install -U tensorflow
+
+pip3 install --pre torch --extra-index-url https://download.pytorch.org/whl/nightly/cpu

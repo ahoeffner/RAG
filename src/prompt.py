@@ -1,4 +1,4 @@
-from rag import RAG
+from Rag import Rag
 from langchain.schema.document import Document
 
 
@@ -6,7 +6,7 @@ LOCATION = "database"
 
 
 def main() :
-	rag = RAG(LOCATION)
+	rag = Rag(LOCATION)
 
 	while(True) :
 		try: text = input("Enter a query: ")
