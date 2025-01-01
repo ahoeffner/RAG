@@ -25,8 +25,6 @@ def main() :
 		print()
 		print(response)
 		print()
-		for source in sources :
-			print(source)
 		print()
 
 

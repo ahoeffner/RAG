@@ -27,6 +27,9 @@ def find_imports(filename):
 
 # Example usage
 if __name__ == "__main__":
-  filename = "src/index.py"  # Replace with the actual filename
+  filename = "src/rag.py"  # Replace with the actual filename
   imported_libs = find_imports(filename)
   print(f"Imported libraries: {imported_libs}")
+
+  for lib in imported_libs :
+     print(f"pip install "+lib)
