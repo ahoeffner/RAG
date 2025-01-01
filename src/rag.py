@@ -69,7 +69,13 @@ class Rag :
 
 	def create(location:str, docs:list[Document]) :
 		for doc in docs :
-			print(doc.to_json())
+			doc = doc.to_json()
+			doc = doc.get("kwargs")
+			mdata = doc.get("metadata")
+			score = doc.get("score")
+			source = Rag._to_json(mdata,score)
+			print(source)
+
 		Chroma.from_documents(docs,Rag.__embeddingFunction(),persist_directory=location)
 
 
