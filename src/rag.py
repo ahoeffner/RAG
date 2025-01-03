@@ -1,4 +1,5 @@
 import json
+import logging
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaLLM
 from transformers import GPT2TokenizerFast
@@ -8,13 +9,18 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 
 class Rag :
-	_vectors:Chroma = None
 	_history:list[str] = []
+	_vectordb:Chroma = None
 
 	__PROMPT__ = """
-	Answer the question based only on the following context: {context}
-	---
-	Answer the question based on the above context: {question}
+	Answer the question based only on the following context:
+
+	{context}
+
+	Answer the question based on the above context:
+
+	{question}
+
 	"""
 
 	limit:int = 8
@@ -22,18 +28,20 @@ class Rag :
 
 
 	def __init__(self,location:str) :
-		self._vectors = Chroma(persist_directory=location, embedding_function=Rag.__embeddingFunction())
+		self._vectordb = Chroma(persist_directory=location, embedding_function=Rag.__embeddingFunction())
 
 
 	def query(self,text:str) :
 		resp = ""
+		hist = ""
 		sources = []
+		logger = Rag.logger()
 
-		for hist in self._history :
-			resp += hist + "\n"
+		for prev in self._history :
+			hist += prev + "\n"
 
 		try:
-			docs = self._vectors.similarity_search_with_score(text,k=self.limit)
+			docs = self._vectordb.similarity_search_with_score(text,k=self.limit)
 		except Exception as e:
 			return("Error: " + str(e),sources)
 
@@ -49,17 +57,19 @@ class Rag :
 			source = Rag._to_json(mdata,score)
 			sources.append(source)
 
-		prmt = Rag.__PROMPT__.format(context=resp,question=text)
+			logger.debug(source)
 
 		model = OllamaLLM(model="mistral")
+		prmt = Rag.__PROMPT__.format(context=hist+"\n"+resp,question=text)
 
 		try:
 			response = model.invoke(prmt)
+			logger.debug(response)
 		except Exception as e:
 			response = "Error: " + str(e)
 			return(response,sources)
 
-		self._history.append(text+"\n"+response)
+		self._history.append(text+"\n"+resp)
 
 		if len(self._history) > self.history :
 			self._history.pop(0)
@@ -101,3 +111,13 @@ class Rag :
 		source["page"]   = mdata.get("page"),
 		source["source"] = mdata.get("source")
 		return(json.dumps(source))
+
+
+	def logger() :
+		logging.basicConfig(
+			filename="rag.log",
+			filemode='a',
+			format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+			datefmt='%H:%M:%S',
+			level=logging.DEBUG)
+		return(logging.getLogger("Rag"))

@@ -4,4 +4,6 @@ share
 data/*
 database/*
 __pycache__
+
+rag.log
 .DS_Store
