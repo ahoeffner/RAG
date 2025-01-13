@@ -24,7 +24,7 @@ class Rag :
 	"""
 
 	limit:int = 8
-	history:int = 16
+	history:int = 8
 
 
 	def __init__(self,location:str) :
@@ -93,14 +93,16 @@ class Rag :
 		tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
 		text_splitter = RecursiveCharacterTextSplitter.from_huggingface_tokenizer(
 			tokenizer,
-			chunk_size=8000,
-			chunk_overlap=512)
+			chunk_size=3000,
+			chunk_overlap=256)
 		return(text_splitter.split_documents(docs))
 
 
 	def __embeddingFunction() :
 		embeddings = BedrockEmbeddings(
-			credentials_profile_name="default", region_name="eu-central-1"
+			region_name="eu-central-1",
+			credentials_profile_name="default",
+			model_id="amazon.titan-embed-text-v1",
 		)
 		return(embeddings)
 
